@@ -15,7 +15,7 @@ This python script generates an SBATCH file for SLURM submission of ichorCNA wor
    Modify `test_001.yaml` to suit your environment and parameters.
 
 2. **Generate SBATCH Script:**  
-   Execute the command below to generate the SBATCH script: `python ichorCNA_workflow.py test_001.yaml`
+   Generate the SBATCH script: `python ichorCNA_workflow.py test_001.yaml`
 
 3. **Submit Job:**  
    Manually submit the generated SBATCH script: `sbatch test_001.sbatch`
