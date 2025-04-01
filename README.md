@@ -7,7 +7,10 @@ This python script generates an SBATCH file for SLURM submission of ichorCNA wor
 - [readCounter](https://github.com/shahcompbio/hmmcopy_utils)
 - [ichorCNA](https://github.com/broadinstitute/ichorCNA)
 - A SLURM scheduler.
-- Sorted BAM files located in the input directory defined in the YAML configuration.
+- Sorted BAM files located in the input directory defined in the YAML configuration. You may also use symbilic links, i.e.,
+  ```bash
+  find ./sorted_bams/ -maxdepth 2 -type f \( -name "*.bam" -o -name "*.bai" \) -exec ln -s "$(realpath "{}")" ./bam_links/ \;
+  ```
 
 ## Usage
 
