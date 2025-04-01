@@ -3,7 +3,7 @@ This python script generates an SBATCH file for SLURM submission of ichorCNA wor
 
 ## Prerequisites
 - Python 3 with the modules: `PyYAML`, `typer`, `jinja2`, `loguru`.
-- [Sambamba](https://github.com/biod/sambamba)
+- [sambamba](https://github.com/biod/sambamba)
 - [readCounter](https://github.com/shahcompbio/hmmcopy_utils)
 - [ichorCNA](https://github.com/broadinstitute/ichorCNA)
 - A SLURM scheduler.
