@@ -1,5 +1,5 @@
 ## Overview
-This python script generates an SBATCH file for SLURM submission of ichorCNA workflows. It parses a YAML configuration file and produces a corresponding SBATCH file.
+This Python script generates an SBATCH file for SLURM submission of ichorCNA workflows. It parses a YAML configuration file and produces a corresponding SBATCH file.
 
 ## Prerequisites
 - Python 3 with the modules: `pathlib`, `PyYAML`, `typer`, `jinja2`, `loguru`.
