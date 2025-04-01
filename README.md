@@ -6,9 +6,6 @@ This python script generates an SBATCH file for SLURM submission of ichorCNA wor
 - A SLURM scheduler.
 - Sorted BAM files located in the input directory defined in the YAML configuration.
 
-## Installation
-Install the required Python packages in one line: `pip install PyYAML typer jinja2 loguru`
-
 ## Usage
 
 1. **Edit Configuration:**  
