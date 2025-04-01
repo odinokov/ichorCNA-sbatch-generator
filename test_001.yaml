@@ -1,0 +1,139 @@
+# ------------------ SLURM SBATCH Configuration ------------------
+sbatch:
+  # The job name used by SLURM
+  job_name: ichorCNA
+
+  # The partition (queue) where this job will run
+  partition: normal
+
+  # The account to be charged for compute time
+  account: personal
+
+  # Max wall-clock time in HH:MM:SS format
+  time: "00:05:00"
+
+  # Number of nodes required
+  nodes: 1
+
+  # Number of tasks on each node
+  ntasks_per_node: 1
+
+  # Number of CPU cores per task
+  cpus_per_task: 4
+
+  # Memory in <number>[KMG] format (e.g., 16G, 8000M).
+  mem: "4G"
+
+  # SLURM output log path. The code writes logs in <my_out_dir>/logs as well.
+  output: "./log/%x-%A_%a.out"
+
+  # SLURM error log path
+  error: "./log/%x-%A_%a.err"
+
+  # Email address to notify about job events
+  mail_user: "your.email@example.com"
+
+  # Type of email notifications (e.g., ALL, FAIL, BEGIN, END)
+  mail_type: NONE
+
+  # Maximum number of concurrent jobs (the % in --array=0-<N>%<max_concurrent>)
+  max_concurrent: 20
+
+  # Maximum allowed number of BAM files (i.e., max queue size).
+  max_queue: 200
+
+# ------------------ Workflow-Specific Configuration ------------------
+workflow:
+  # The bin size (window) in base pairs for readCounter
+  bin_size: 1000000
+
+  # Input directory containing BAM files
+  my_in_dir: "./BAM/"
+
+  # Output directory for results, logs, etc.
+  my_out_dir: "./OUT/"
+
+  # Temporary directory for intermediate files
+  my_tmp_dir: "./temp/"
+
+  # The 'sambamba' executable name or path (must be in PATH)
+  sambamba: "sambamba"
+
+  # The 'readCounter' executable name or path (must be in PATH)
+  readCounter: "readCounter"
+
+  # The 'Rscript' executable name or path (must be in PATH)
+  Rscript: "Rscript"
+
+  # Full path to the ichorCNA R script
+  ichorCNA_script: "./ichorCNA/lib/R/library/ichorCNA/scripts/runIchorCNA.R"
+
+  # Chromosomes for readCounter, comma-separated (e.g., "chr1,chr2,...")
+  readcounter_chrs: "chr1,chr2,chr3,chr4,chr5,chr6,chr7,chr8,chr9,chr10,chr11,chr12,chr13,chr14,chr15,chr16,chr17,chr18,chr19,chr20,chr21,chr22,chrX,chrY"
+
+  # Quality threshold specifically for readCounter
+  readcounter_quality: 30
+
+# ------------------ ichorCNA-Specific Configuration ------------------
+ichorCNA:
+  paths:
+    # Wig file containing GC content information
+    gc_file: "./ichorCNA/lib/R/library/ichorCNA/extdata/gc_hg38_1000kb.wig"
+
+    # Wig file containing mappability data
+    map_file: "./ichorCNA/lib/R/library/ichorCNA/extdata/map_hg38_1000kb.wig"
+
+    # File with centromere coordinates
+    cent_file: "./ichorCNA/lib/R/library/ichorCNA/extdata/GRCh38.GCA_000001405.2_centromere_acen.txt"
+
+    # Panel of Normals (PoN) file for baseline correction
+    PON_file: "./ichorCNA/lib/R/library/ichorCNA/extdata/HD_ULP_PoN_hg38_1Mb_median_normAutosome_median.rds"
+
+  parameters:
+    # Possible ploidy values as an R vector
+    ploidy: "c(2,3)"
+
+    # Normal fraction options as an R vector
+    normal: "c(0.5,0.6,0.7,0.8,0.9,0.95,0.99)"
+
+    # Maximum allowed copy number
+    maxCN: 5
+
+    # Include homozygous deletions?
+    includeHOMD: false
+
+    # Chromosomes to process (R vector)
+    chrs: "c('chr1','chr2','chr3','chr4','chr5','chr6','chr7','chr8','chr9','chr10','chr11','chr12','chr13','chr14','chr15','chr16','chr17','chr18','chr19','chr20','chr21','chr22')"
+
+    # Chromosomes for training (R vector)
+    chrTrain: "c('chr1','chr2','chr3','chr4','chr5','chr6','chr7','chr8','chr9','chr10','chr11','chr12','chr13','chr14','chr15','chr16','chr17','chr18','chr19','chr20','chr21','chr22')"
+
+    # Chromosomes for normalization (R vector)
+    chrNormalize: "c('chr1','chr2','chr3','chr4','chr5','chr6','chr7','chr8','chr9','chr10','chr11','chr12','chr13','chr14','chr15','chr16','chr17','chr18','chr19','chr20','chr21','chr22')"
+
+    # Whether to estimate normal cell fraction
+    estimateNormal: true
+
+    # Whether to estimate ploidy
+    estimatePloidy: true
+
+    # Whether to estimate subclonal prevalence
+    estimateScPrevalence: true
+
+    # Subclonal states to consider (R vector)
+    scStates: "c(1,3)"
+
+    # Transition error parameter for HMM; code requires
+    txnE: 0.9999
+
+    # Transition strength parameter
+    txnStrength: 10000
+
+    # Genome style (e.g., UCSC)
+    genomeStyle: "UCSC"
+
+    # Genome build (e.g., hg38)
+    genomeBuild: "hg38"
+
+    # Output plot file format (e.g., png, pdf)
+    plotFileType: "png"
