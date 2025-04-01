@@ -15,7 +15,7 @@ Install the required Python packages in one line: `pip install PyYAML typer jinj
    Modify `test_001.yaml` to suit your environment and parameters.
 
 2. **Generate SBATCH Script:**  
-   Execute the command below to generate the SBATCH script: `python ichorCNA.py test_001.yaml`
+   Execute the command below to generate the SBATCH script: `python ichorCNA_workflow.py test_001.yaml`
 
 3. **Submit Job:**  
    Manually submit the generated SBATCH script: `sbatch test_001.sbatch`
