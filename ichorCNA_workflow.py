@@ -115,6 +115,7 @@ main() {
     TMP_DIR="${BASE_TMP_DIR}/${SAMPLE_ID}-${SLURM_JOB_ID}"
     mkdir -p "${MY_OUT_DIR}/${SAMPLE_ID}" "${TMP_DIR}" || exit 1
     process_sample "${BAM_FILES[$SLURM_ARRAY_TASK_ID]}" "${SAMPLE_ID}" "${TMP_DIR}"
+    rm -rf "${TMP_DIR}"
 }
 
 main "$@"
