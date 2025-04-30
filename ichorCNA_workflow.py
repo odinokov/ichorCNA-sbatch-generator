@@ -112,9 +112,13 @@ declare -a BAM_FILES
 mapfile -t BAM_FILES < "{{ list_file }}"
 main() {
     SAMPLE_ID=$(basename "${BAM_FILES[$SLURM_ARRAY_TASK_ID]}" .bam)
-    TMP_DIR="${BASE_TMP_DIR}/${SAMPLE_ID}-${SLURM_JOB_ID}"
-    mkdir -p "${MY_OUT_DIR}/${SAMPLE_ID}" "${TMP_DIR}" || exit 1
-    process_sample "${BAM_FILES[$SLURM_ARRAY_TASK_ID]}" "${SAMPLE_ID}" "${TMP_DIR}"
+    mkdir -p "${BASE_TMP_DIR}/${SAMPLE_ID}-${SLURM_JOB_ID}" "${MY_OUT_DIR}/${SAMPLE_ID}" || exit 1
+    TMP_DIR=$(mktemp -d -p "${BASE_TMP_DIR}/${SAMPLE_ID}-${SLURM_JOB_ID}") || exit 1
+    process_sample \
+        "${BAM_FILES[$SLURM_ARRAY_TASK_ID]}" \
+        "${SAMPLE_ID}" \
+        "${TMP_DIR}"
+      
     rm -rf "${TMP_DIR}"
 }
 
