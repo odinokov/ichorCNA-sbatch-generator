@@ -106,6 +106,8 @@ process_sample() {
         --genomeBuild "$GENOME_BUILD" \
         --genomeStyle "$GENOME_STYLE" \
         --plotFileType "$PLOT_TYPE"
+        
+    rm -rf "${tmp_dir}"
 }
 
 declare -a BAM_FILES
@@ -118,8 +120,6 @@ main() {
         "${BAM_FILES[$SLURM_ARRAY_TASK_ID]}" \
         "${SAMPLE_ID}" \
         "${TMP_DIR}"
-      
-    rm -rf "${TMP_DIR}"
 }
 
 main "$@"
