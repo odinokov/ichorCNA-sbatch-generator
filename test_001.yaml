@@ -133,7 +133,7 @@ ichorCNA:
     genomeStyle: "UCSC"
 
     # Genome build (e.g., hg38)
-    genomeBuild: "hg19"
+    genomeBuild: "hg38"
 
     # Output plot file format (e.g., png, pdf)
     plotFileType: "png"
