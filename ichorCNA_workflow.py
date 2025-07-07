@@ -76,7 +76,6 @@ process_sample() {
     local input_bam="$1"
     local sample_id="$2"
     local tmp_dir="$3"
-    trap 'rm -rf "${tmp_dir}"' EXIT ERR
 
     filtered_bam="${tmp_dir}/${sample_id}.filtered.bam"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Processing ${sample_id}"
@@ -106,16 +105,18 @@ process_sample() {
         --genomeBuild "$GENOME_BUILD" \
         --genomeStyle "$GENOME_STYLE" \
         --plotFileType "$PLOT_TYPE"
-        
-    rm -rf "${tmp_dir}"
 }
 
 declare -a BAM_FILES
 mapfile -t BAM_FILES < <(grep -v '^#' "{{ list_file }}")
 main() {
     SAMPLE_ID=$(basename "${BAM_FILES[$SLURM_ARRAY_TASK_ID]}" .bam)
-    mkdir -p "${BASE_TMP_DIR}/${SAMPLE_ID}-${SLURM_JOB_ID}" "${MY_OUT_DIR}/${SAMPLE_ID}" || exit 1
-    TMP_DIR=$(mktemp -d -p "${BASE_TMP_DIR}/${SAMPLE_ID}-${SLURM_JOB_ID}") || exit 1
+    SAMPLE_TMP_BASE="${BASE_TMP_DIR}/${SAMPLE_ID}-${SLURM_JOB_ID}"
+    mkdir -p "${SAMPLE_TMP_BASE}" "${MY_OUT_DIR}/${SAMPLE_ID}" || exit 1
+    TMP_DIR=$(mktemp -d -p "${SAMPLE_TMP_BASE}") || exit 1
+
+    trap 'rm -rf "${TMP_DIR}" "${SAMPLE_TMP_BASE}"' EXIT ERR
+    
     process_sample \
         "${BAM_FILES[$SLURM_ARRAY_TASK_ID]}" \
         "${SAMPLE_ID}" \
