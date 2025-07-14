@@ -101,7 +101,7 @@ process_sample() {
         --scStates "$SC_STATES" \
         --txnE "$TXN_E" \
         --txnStrength "$TXN_STRENGTH" \
-        --outDir "$MY_OUT_DIR/${SAMPLE_ID}" \
+        --outDir "$MY_OUT_DIR/${sample_id}" \
         --genomeBuild "$GENOME_BUILD" \
         --genomeStyle "$GENOME_STYLE" \
         --plotFileType "$PLOT_TYPE"
