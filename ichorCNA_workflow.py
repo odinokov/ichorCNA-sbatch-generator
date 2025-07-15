@@ -97,6 +97,8 @@ process_sample() {
         --chrNormalize "$CHR_NORMALIZE" \
         --estimateNormal "$ESTIMATE_NORMAL" \
         --estimatePloidy "$ESTIMATE_PLOIDY" \
+        --ploidy "$PLOIDY" \
+        --normal "$NORMAL" \
         --estimateScPrevalence "$ESTIMATE_SC_PREVALENCE" \
         --scStates "$SC_STATES" \
         --txnE "$TXN_E" \
