@@ -93,7 +93,8 @@ process_sample() {
         --centromere "$CENT_FILE" \
         --normalPanel "$PON_FILE" \
         --includeHOMD "$INCLUDE_HOMD" \
-        --chrs "$CHRS" --chrTrain "$CHR_TRAIN" \
+        --chrs "$CHRS" \
+        --chrTrain "$CHR_TRAIN" \
         --chrNormalize "$CHR_NORMALIZE" \
         --estimateNormal "$ESTIMATE_NORMAL" \
         --estimatePloidy "$ESTIMATE_PLOIDY" \
