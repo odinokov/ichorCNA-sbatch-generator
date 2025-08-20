@@ -10,7 +10,7 @@ sbatch:
   account: personal
 
   # Max wall-clock time in HH:MM:SS format
-  time: "00:05:00"
+  time: "00:59:00"
 
   # Number of nodes required
   nodes: 1
