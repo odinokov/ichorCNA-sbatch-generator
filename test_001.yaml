@@ -74,7 +74,7 @@ workflow:
   # readcounter_chrs: "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,X,Y"
 
   # Quality threshold specifically for readCounter
-  readcounter_quality: 30
+  readcounter_quality: 20
 
 # ------------------ ichorCNA-Specific Configuration ------------------
 ichorCNA:
@@ -96,7 +96,7 @@ ichorCNA:
     ploidy: "c(2,3)"
 
     # Normal fraction options as an R vector
-    normal: "c(0.5,0.6,0.7,0.8,0.9,0.95,0.99)"
+    normal: "c(0.5,0.6,0.7,0.8,0.9)"
 
     # Maximum allowed copy number
     maxCN: 5
