@@ -9,7 +9,7 @@ This Python script generates an SBATCH file for SLURM submission of ichorCNA wor
 - A SLURM scheduler.
 - Sorted BAM files located in the input directory defined in the YAML configuration. You may also use symbolic links, i.e.,
   ```bash
-  S="/rfs-storageservice/GIS/Projects/LOCCG/tmp.for.QI_Ting_hg19/OUT_BAM_HG19/1x";
+  S="./OUT_BAM_HG19/1x";
   mkdir -p ./bam_links;
   find "$S" -maxdepth 4 -type f \( -name '*.bam' -o -name '*.bai' \) -exec ln -s -t ./bam_links {} +;
   ```
