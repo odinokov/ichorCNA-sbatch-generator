@@ -81,6 +81,7 @@ export ALT_FRAC_THRESH="{{ ichorCNA.parameters.altFracThreshold }}"
 export NORMALIZE_MALE_X="{{ 'TRUE' if ichorCNA.parameters.normalizeMaleX else 'FALSE' }}"
 export MIN_TUM_FRAC_CORR="{{ ichorCNA.parameters.minTumFracToCorrect }}"
 export FRAC_READS_Y_MALE="{{ ichorCNA.parameters.fracReadsInChrYForMale }}"
+export LAMBDA_SCALE_HYPER="{{ ichorCNA.parameters.lambdaScaleHyperParam }}"
 
 process_sample() {
     local input_bam="$1"
@@ -128,7 +129,8 @@ process_sample() {
         --altFracThreshold "$ALT_FRAC_THRESH" \
         --normalizeMaleX "$NORMALIZE_MALE_X" \
         --minTumFracToCorrect "$MIN_TUM_FRAC_CORR" \
-        --fracReadsInChrYForMale "$FRAC_READS_Y_MALE"
+        --fracReadsInChrYForMale "$FRAC_READS_Y_MALE" \
+        --lambdaScaleHyperParam "$LAMBDA_SCALE_HYPER"
 }
 
 declare -a BAM_FILES
@@ -222,5 +224,6 @@ def generate(
 if __name__ == "__main__":
     app()
   
+
 
 
