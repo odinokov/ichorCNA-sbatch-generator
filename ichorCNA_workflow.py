@@ -71,6 +71,16 @@ export TXN_STRENGTH="{{ ichorCNA.parameters.txnStrength }}"
 export GENOME_STYLE="{{ ichorCNA.parameters.genomeStyle }}"
 export GENOME_BUILD="{{ ichorCNA.parameters.genomeBuild }}"
 export PLOT_TYPE="{{ ichorCNA.parameters.plotFileType }}"
+export PLOT_YLIM="{{ ichorCNA.parameters.plotYLim }}"
+export MIN_MAP_SCORE="{{ ichorCNA.parameters.minMapScore }}"
+export RM_CENTROMERE_FLANK="{{ ichorCNA.parameters.rmCentromereFlankLength }}"
+export MAX_FRAC_CNA_SUB="{{ ichorCNA.parameters.maxFracCNASubclone }}"
+export MAX_FRAC_GENOME_SUB="{{ ichorCNA.parameters.maxFracGenomeSubclone }}"
+export MIN_SEG_BINS="{{ ichorCNA.parameters.minSegmentBins }}"
+export ALT_FRAC_THRESH="{{ ichorCNA.parameters.altFracThreshold }}"
+export NORMALIZE_MALE_X="{{ 'TRUE' if ichorCNA.parameters.normalizeMaleX else 'FALSE' }}"
+export MIN_TUM_FRAC_CORR="{{ ichorCNA.parameters.minTumFracToCorrect }}"
+export FRAC_READS_Y_MALE="{{ ichorCNA.parameters.fracReadsInChrYForMale }}"
 
 process_sample() {
     local input_bam="$1"
@@ -109,6 +119,16 @@ process_sample() {
         --genomeBuild "$GENOME_BUILD" \
         --genomeStyle "$GENOME_STYLE" \
         --plotFileType "$PLOT_TYPE"
+        --plotYLim "$PLOT_YLIM" \
+        --minMapScore "$MIN_MAP_SCORE" \
+        --rmCentromereFlankLength "$RM_CENTROMERE_FLANK" \
+        --maxFracCNASubclone "$MAX_FRAC_CNA_SUB" \
+        --maxFracGenomeSubclone "$MAX_FRAC_GENOME_SUB" \
+        --minSegmentBins "$MIN_SEG_BINS" \
+        --altFracThreshold "$ALT_FRAC_THRESH" \
+        --normalizeMaleX "$NORMALIZE_MALE_X" \
+        --minTumFracToCorrect "$MIN_TUM_FRAC_CORR" \
+        --fracReadsInChrYForMale "$FRAC_READS_Y_MALE"
 }
 
 declare -a BAM_FILES
@@ -202,4 +222,5 @@ def generate(
 if __name__ == "__main__":
     app()
   
+
 
