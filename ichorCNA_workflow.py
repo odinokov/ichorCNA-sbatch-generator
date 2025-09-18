@@ -119,7 +119,7 @@ process_sample() {
         --outDir "$MY_OUT_DIR/${sample_id}" \
         --genomeBuild "$GENOME_BUILD" \
         --genomeStyle "$GENOME_STYLE" \
-        --plotFileType "$PLOT_TYPE"
+        --plotFileType "$PLOT_TYPE" \
         --plotYLim "$PLOT_YLIM" \
         --minMapScore "$MIN_MAP_SCORE" \
         --rmCentromereFlankLength "$RM_CENTROMERE_FLANK" \
@@ -224,7 +224,3 @@ def generate(
 if __name__ == "__main__":
     app()
   
-
-
-
-
