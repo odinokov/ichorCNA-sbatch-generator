@@ -145,3 +145,33 @@ ichorCNA:
 
     # Output plot file format (e.g., png, pdf)
     plotFileType: "png"
+
+    # Plot ylim range
+    # plotYLim: "c(-2,2)"
+
+    # # Minimum mappability score threshold
+    # minMapScore: 0.9
+
+    # # Length of region flanking centromere to remove
+    # rmCentromereFlankLength: 100000
+
+    # # Max fraction of subclonal CNA events allowed
+    # maxFracCNASubclone: 0.7
+
+    # # Max fraction of genome affected by subclones
+    # maxFracGenomeSubclone: 0.5
+
+    # # Minimum number of bins in largest segment to call tumor fraction
+    # minSegmentBins: 50
+
+    # # Minimum altered fraction to call tumor fraction
+    # altFracThreshold: 0.05
+
+    # # Normalize chrX in male samples
+    # normalizeMaleX: true
+
+    # # Minimum tumor fraction for correction
+    # minTumFracToCorrect: 0.1
+
+    # # Fraction of reads in chrY threshold for male assignment
+    # fracReadsInChrYForMale: 0.001
