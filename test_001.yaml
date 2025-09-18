@@ -175,3 +175,6 @@ ichorCNA:
 
     # Fraction of reads in chrY threshold for male assignment
     fracReadsInChrYForMale: 0.001
+
+    # Hyperparameter (scale) for Gamma prior on Student's-t precision.
+    lambdaScaleHyperParam: 3
