@@ -90,7 +90,7 @@ process_sample() {
 
     filtered_bam="${tmp_dir}/${sample_id}.filtered.bam"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Processing ${sample_id}"
-    "${SAMBAMBA_CMD}" view -t "${SLURM_CPUS_PER_TASK}" -l 3 -h -f bam -F "not (duplicate or failed_quality_control)" -o "${filtered_bam}.tmp" "${input_bam}"
+    "${SAMBAMBA_CMD}" view -t "${SLURM_CPUS_PER_TASK}" -l 3 -h -f bam -F "not (duplicate or failed_quality_control) and proper_pair" -o "${filtered_bam}.tmp" "${input_bam}"
     mv "${filtered_bam}.tmp" "${filtered_bam}"
     "${SAMBAMBA_CMD}" index -t "${SLURM_CPUS_PER_TASK}" "${filtered_bam}"
     "${READCOUNTER_CMD}" --chromosome "${READCOUNTER_CHRS}" --window "${BIN_SIZE}" --quality "${READCOUNTER_QUALITY}" "${filtered_bam}" > "${tmp_dir}/${sample_id}.wig.tmp"
@@ -224,6 +224,7 @@ def generate(
 if __name__ == "__main__":
     app()
   
+
 
 
 
