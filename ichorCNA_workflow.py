@@ -92,6 +92,7 @@ process_sample() {
         --mapWig "$MAP_FILE" \
         --centromere "$CENT_FILE" \
         --normalPanel "$PON_FILE" \
+        --maxCN "$MAX_CN" \
         --includeHOMD "$INCLUDE_HOMD" \
         --chrs "$CHRS" \
         --chrTrain "$CHR_TRAIN" \
@@ -201,3 +202,4 @@ def generate(
 if __name__ == "__main__":
     app()
   
+
