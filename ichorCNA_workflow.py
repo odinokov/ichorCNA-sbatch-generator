@@ -19,7 +19,7 @@ app = typer.Typer(
     help="Generate an SBATCH script for an ichorCNA workflow using a simple YAML configuration.\n\nUsage:\n  $0 CONFIG_FILE"
 )
 
-# SBATCH template with essential parameters
+# SBATCH template with hardcoded (inlined) config â€” no export statements
 SBATCH_TEMPLATE = Template(
 r"""#!/bin/bash
 #SBATCH --job-name={{ sbatch.job_name }}
@@ -39,50 +39,6 @@ r"""#!/bin/bash
 set -eo pipefail
 umask 077
 
-export SAMBAMBA_CMD="{{ workflow.sambamba }}"
-export READCOUNTER_CMD="{{ workflow.readCounter }}"
-export RSCRIPT_CMD="{{ workflow.Rscript }}"
-export ICHOR_SCRIPT="{{ workflow.ichorCNA_script }}"
-export BIN_SIZE="{{ workflow.bin_size }}"
-export READCOUNTER_CHRS="{{ workflow.readcounter_chrs }}"
-export READCOUNTER_QUALITY="{{ workflow.readcounter_quality }}"
-export MY_IN_DIR="{{ workflow.my_in_dir }}"
-export MY_OUT_DIR="{{ workflow.my_out_dir }}"
-export BASE_TMP_DIR="{{ workflow.my_tmp_dir }}"
-export LIST_FILE="{{ list_file }}"
-
-export GC_FILE="{{ ichorCNA.paths.gc_file }}"
-export MAP_FILE="{{ ichorCNA.paths.map_file }}"
-export CENT_FILE="{{ ichorCNA.paths.cent_file }}"
-export PON_FILE="{{ ichorCNA.paths.PON_file }}"
-export PLOIDY="{{ ichorCNA.parameters.ploidy }}"
-export NORMAL="{{ ichorCNA.parameters.normal }}"
-export MAX_CN="{{ ichorCNA.parameters.maxCN }}"
-export INCLUDE_HOMD="{{ 'TRUE' if ichorCNA.parameters.includeHOMD else 'FALSE' }}"
-export CHRS="{{ ichorCNA.parameters.chrs }}"
-export CHR_TRAIN="{{ ichorCNA.parameters.chrTrain }}"
-export CHR_NORMALIZE="{{ ichorCNA.parameters.chrNormalize }}"
-export ESTIMATE_NORMAL="{{ 'TRUE' if ichorCNA.parameters.estimateNormal else 'FALSE' }}"
-export ESTIMATE_PLOIDY="{{ 'TRUE' if ichorCNA.parameters.estimatePloidy else 'FALSE' }}"
-export ESTIMATE_SC_PREVALENCE="{{ 'TRUE' if ichorCNA.parameters.estimateScPrevalence else 'FALSE' }}"
-export SC_STATES="{{ ichorCNA.parameters.scStates }}"
-export TXN_E="{{ ichorCNA.parameters.txnE }}"
-export TXN_STRENGTH="{{ ichorCNA.parameters.txnStrength }}"
-export GENOME_STYLE="{{ ichorCNA.parameters.genomeStyle }}"
-export GENOME_BUILD="{{ ichorCNA.parameters.genomeBuild }}"
-export PLOT_TYPE="{{ ichorCNA.parameters.plotFileType }}"
-export PLOT_YLIM="{{ ichorCNA.parameters.plotYLim }}"
-export MIN_MAP_SCORE="{{ ichorCNA.parameters.minMapScore }}"
-export RM_CENTROMERE_FLANK="{{ ichorCNA.parameters.rmCentromereFlankLength }}"
-export MAX_FRAC_CNA_SUB="{{ ichorCNA.parameters.maxFracCNASubclone }}"
-export MAX_FRAC_GENOME_SUB="{{ ichorCNA.parameters.maxFracGenomeSubclone }}"
-export MIN_SEG_BINS="{{ ichorCNA.parameters.minSegmentBins }}"
-export ALT_FRAC_THRESH="{{ ichorCNA.parameters.altFracThreshold }}"
-export NORMALIZE_MALE_X="{{ 'TRUE' if ichorCNA.parameters.normalizeMaleX else 'FALSE' }}"
-export MIN_TUM_FRAC_CORR="{{ ichorCNA.parameters.minTumFracToCorrect }}"
-export FRAC_READS_Y_MALE="{{ ichorCNA.parameters.fracReadsInChrYForMale }}"
-export LAMBDA_SCALE_HYPER="{{ ichorCNA.parameters.lambdaScaleHyperParam }}"
-
 process_sample() {
     local input_bam="$1"
     local sample_id="$2"
@@ -90,59 +46,72 @@ process_sample() {
 
     filtered_bam="${tmp_dir}/${sample_id}.filtered.bam"
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Processing ${sample_id}"
-    "${SAMBAMBA_CMD}" view -t "${SLURM_CPUS_PER_TASK}" -l 3 -h -f bam -F "not (duplicate or failed_quality_control) and proper_pair" -o "${filtered_bam}.tmp" "${input_bam}"
+
+    "{{ workflow.sambamba }}" view \
+        -t "${SLURM_CPUS_PER_TASK}" -l 3 -h -f bam \
+        -F "not (duplicate or failed_quality_control) and proper_pair" \
+        -o "${filtered_bam}.tmp" \
+        "${input_bam}"
     mv "${filtered_bam}.tmp" "${filtered_bam}"
-    "${SAMBAMBA_CMD}" index -t "${SLURM_CPUS_PER_TASK}" "${filtered_bam}"
-    "${READCOUNTER_CMD}" --chromosome "${READCOUNTER_CHRS}" --window "${BIN_SIZE}" --quality "${READCOUNTER_QUALITY}" "${filtered_bam}" > "${tmp_dir}/${sample_id}.wig.tmp"
+
+    "{{ workflow.sambamba }}" index -t "${SLURM_CPUS_PER_TASK}" "${filtered_bam}"
+
+    "{{ workflow.readCounter }}" \
+        --chromosome "{{ workflow.readcounter_chrs }}" \
+        --window "{{ workflow.bin_size }}" \
+        --quality "{{ workflow.readcounter_quality }}" \
+        "${filtered_bam}" > "${tmp_dir}/${sample_id}.wig.tmp"
     mv "${tmp_dir}/${sample_id}.wig.tmp" "${tmp_dir}/${sample_id}.wig"
+
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] Running ichorCNA for ${sample_id}"
-    "${RSCRIPT_CMD}" "${ICHOR_SCRIPT}" \
+    "{{ workflow.Rscript }}" "{{ workflow.ichorCNA_script }}" \
         --id "${sample_id}" \
         --WIG "${tmp_dir}/${sample_id}.wig" \
-        --gcWig "$GC_FILE" \
-        --mapWig "$MAP_FILE" \
-        --centromere "$CENT_FILE" \
-        --normalPanel "$PON_FILE" \
-        --maxCN "$MAX_CN" \
-        --includeHOMD "$INCLUDE_HOMD" \
-        --chrs "$CHRS" \
-        --chrTrain "$CHR_TRAIN" \
-        --chrNormalize "$CHR_NORMALIZE" \
-        --estimateNormal "$ESTIMATE_NORMAL" \
-        --estimatePloidy "$ESTIMATE_PLOIDY" \
-        --ploidy "$PLOIDY" \
-        --normal "$NORMAL" \
-        --estimateScPrevalence "$ESTIMATE_SC_PREVALENCE" \
-        --scStates "$SC_STATES" \
-        --txnE "$TXN_E" \
-        --txnStrength "$TXN_STRENGTH" \
-        --outDir "$MY_OUT_DIR/${sample_id}" \
-        --genomeBuild "$GENOME_BUILD" \
-        --genomeStyle "$GENOME_STYLE" \
-        --plotFileType "$PLOT_TYPE" \
-        --plotYLim "$PLOT_YLIM" \
-        --minMapScore "$MIN_MAP_SCORE" \
-        --rmCentromereFlankLength "$RM_CENTROMERE_FLANK" \
-        --maxFracCNASubclone "$MAX_FRAC_CNA_SUB" \
-        --maxFracGenomeSubclone "$MAX_FRAC_GENOME_SUB" \
-        --minSegmentBins "$MIN_SEG_BINS" \
-        --altFracThreshold "$ALT_FRAC_THRESH" \
-        --normalizeMaleX "$NORMALIZE_MALE_X" \
-        --minTumFracToCorrect "$MIN_TUM_FRAC_CORR" \
-        --fracReadsInChrYForMale "$FRAC_READS_Y_MALE" \
-        --lambdaScaleHyperParam "$LAMBDA_SCALE_HYPER"
+        --gcWig "{{ ichorCNA.paths.gc_file }}" \
+        --mapWig "{{ ichorCNA.paths.map_file }}" \
+        --centromere "{{ ichorCNA.paths.cent_file }}" \
+        --normalPanel "{{ ichorCNA.paths.PON_file }}" \
+        --maxCN "{{ ichorCNA.parameters.maxCN }}" \
+        --includeHOMD "{{ 'TRUE' if ichorCNA.parameters.includeHOMD else 'FALSE' }}" \
+        --chrs "{{ ichorCNA.parameters.chrs }}" \
+        --chrTrain "{{ ichorCNA.parameters.chrTrain }}" \
+        --chrNormalize "{{ ichorCNA.parameters.chrNormalize }}" \
+        --estimateNormal "{{ 'TRUE' if ichorCNA.parameters.estimateNormal else 'FALSE' }}" \
+        --estimatePloidy "{{ 'TRUE' if ichorCNA.parameters.estimatePloidy else 'FALSE' }}" \
+        --ploidy "{{ ichorCNA.parameters.ploidy }}" \
+        --normal "{{ ichorCNA.parameters.normal }}" \
+        --estimateScPrevalence "{{ 'TRUE' if ichorCNA.parameters.estimateScPrevalence else 'FALSE' }}" \
+        --scStates "{{ ichorCNA.parameters.scStates }}" \
+        --txnE "{{ ichorCNA.parameters.txnE }}" \
+        --txnStrength "{{ ichorCNA.parameters.txnStrength }}" \
+        --outDir "{{ workflow.my_out_dir }}/${sample_id}" \
+        --genomeBuild "{{ ichorCNA.parameters.genomeBuild }}" \
+        --genomeStyle "{{ ichorCNA.parameters.genomeStyle }}" \
+        --plotFileType "{{ ichorCNA.parameters.plotFileType }}" \
+        --plotYLim "{{ ichorCNA.parameters.plotYLim }}" \
+        --minMapScore "{{ ichorCNA.parameters.minMapScore }}" \
+        --rmCentromereFlankLength "{{ ichorCNA.parameters.rmCentromereFlankLength }}" \
+        --maxFracCNASubclone "{{ ichorCNA.parameters.maxFracCNASubclone }}" \
+        --maxFracGenomeSubclone "{{ ichorCNA.parameters.maxFracGenomeSubclone }}" \
+        --minSegmentBins "{{ ichorCNA.parameters.minSegmentBins }}" \
+        --altFracThreshold "{{ ichorCNA.parameters.altFracThreshold }}" \
+        --normalizeMaleX "{{ 'TRUE' if ichorCNA.parameters.normalizeMaleX else 'FALSE' }}" \
+        --minTumFracToCorrect "{{ ichorCNA.parameters.minTumFracToCorrect }}" \
+        --fracReadsInChrYForMale "{{ ichorCNA.parameters.fracReadsInChrYForMale }}" \
+        --lambdaScaleHyperParam "{{ ichorCNA.parameters.lambdaScaleHyperParam }}"
 }
 
 declare -a BAM_FILES
-mapfile -t BAM_FILES < <(grep -v '^#' ${LIST_FILE})
+mapfile -t BAM_FILES < <(grep -v '^#' "{{ list_file }}")
+
 main() {
     SAMPLE_ID=$(basename "${BAM_FILES[$SLURM_ARRAY_TASK_ID]}" .bam)
-    SAMPLE_TMP_BASE="${BASE_TMP_DIR}/${SAMPLE_ID}-${SLURM_JOB_ID}"
-    mkdir -p "${SAMPLE_TMP_BASE}" "${MY_OUT_DIR}/${SAMPLE_ID}" || exit 1
+    SAMPLE_TMP_BASE="{{ workflow.my_tmp_dir }}"/"${SAMPLE_ID}-${SLURM_JOB_ID}"
+    mkdir -p "${SAMPLE_TMP_BASE}" "{{ workflow.my_out_dir }}"/"${SAMPLE_ID}" || exit 1
     TMP_DIR=$(mktemp -d -p "${SAMPLE_TMP_BASE}") || exit 1
 
     trap 'rm -rf "${TMP_DIR}" "${SAMPLE_TMP_BASE}"' EXIT ERR
-    
+
     process_sample \
         "${BAM_FILES[$SLURM_ARRAY_TASK_ID]}" \
         "${SAMPLE_ID}" \
@@ -170,24 +139,23 @@ def generate(
         format="<green>{time:YYYY-MM-DD HH:mm:ss}</green> | <level>{level: <8}</level> | <level>{message}</level>",
         level="INFO"
     )
-    
+
     try:
         # Load configuration as a simple dictionary
         config = yaml.safe_load(config_file.read_text())
         sbatch = config["sbatch"]
         workflow = config["workflow"]
         ichorCNA = config["ichorCNA"]
-        
-        # Remove trailing slash from directory paths if present
+
+        # Normalize directory paths
         workflow["my_in_dir"] = workflow["my_in_dir"].rstrip("/")
         workflow["my_out_dir"] = workflow["my_out_dir"].rstrip("/")
         workflow["my_tmp_dir"] = workflow["my_tmp_dir"].rstrip("/")
 
-
         # Create output directory for results
         Path(workflow["my_out_dir"]).mkdir(parents=True, exist_ok=True)
-        
-        # Create log folders based on YAML log paths (e.g., "./log")
+
+        # Ensure log folders exist
         for log_path in (sbatch["output"], sbatch["error"]):
             Path(log_path).parent.mkdir(parents=True, exist_ok=True)
 
@@ -204,12 +172,12 @@ def generate(
         list_file.write_text("\n".join(str(bam) for bam in bam_files))
         logger.info(f"Wrote {len(bam_files)} entries to {list_file}.")
 
+        # Render script with all values hardcoded inline
         rendered_script = SBATCH_TEMPLATE.render(
             sbatch=sbatch,
             workflow=workflow,
             ichorCNA=ichorCNA,
             total_files=len(bam_files),
-            output_dir=workflow["my_out_dir"],
             list_file=str(list_file)
         )
 
@@ -223,4 +191,3 @@ def generate(
 
 if __name__ == "__main__":
     app()
-  
