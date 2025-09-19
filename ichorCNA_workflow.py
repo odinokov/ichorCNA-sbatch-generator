@@ -106,8 +106,8 @@ mapfile -t BAM_FILES < <(grep -v '^#' "{{ list_file }}")
 
 main() {
     SAMPLE_ID=$(basename "${BAM_FILES[$SLURM_ARRAY_TASK_ID]}" .bam)
-    SAMPLE_TMP_BASE="{{ workflow.my_tmp_dir }}"/"${SAMPLE_ID}-${SLURM_JOB_ID}"
-    mkdir -p "${SAMPLE_TMP_BASE}" "{{ workflow.my_out_dir }}"/"${SAMPLE_ID}" || exit 1
+    SAMPLE_TMP_BASE="{{ workflow.my_tmp_dir }}/${SAMPLE_ID}-${SLURM_JOB_ID}"
+    mkdir -p "${SAMPLE_TMP_BASE}" "{{ workflow.my_out_dir }}/${SAMPLE_ID}" || exit 1
     TMP_DIR=$(mktemp -d -p "${SAMPLE_TMP_BASE}") || exit 1
 
     trap 'rm -rf "${TMP_DIR}" "${SAMPLE_TMP_BASE}"' EXIT ERR
@@ -191,3 +191,4 @@ def generate(
 
 if __name__ == "__main__":
     app()
+
