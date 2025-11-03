@@ -49,7 +49,7 @@ process_sample() {
 
     "{{ workflow.sambamba }}" view \
         -t "${SLURM_CPUS_PER_TASK}" -l 3 -h -f bam \
-        -F "not (duplicate or failed_quality_control) and proper_pair" \
+        -F "not (duplicate or failed_quality_control)" \
         -o "${filtered_bam}.tmp" \
         "${input_bam}"
     mv "${filtered_bam}.tmp" "${filtered_bam}"
@@ -192,5 +192,6 @@ def generate(
 
 if __name__ == "__main__":
     app()
+
 
 
