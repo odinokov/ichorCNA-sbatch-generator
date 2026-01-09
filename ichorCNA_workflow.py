@@ -101,6 +101,7 @@ process_sample() {
         --estimatePloidy "$ESTIMATE_PLOIDY" \
         --ploidy "$PLOIDY" \
         --normal "$NORMAL" \
+        --maxCN "$MAX_CN"
         --estimateScPrevalence "$ESTIMATE_SC_PREVALENCE" \
         --scStates "$SC_STATES" \
         --txnE "$TXN_E" \
@@ -202,3 +203,4 @@ def generate(
 if __name__ == "__main__":
     app()
   
+
