@@ -192,7 +192,7 @@ def generate(
             list_file=str(list_file)
         )
 
-        sbatch_path = config_file.with_suffix(".sbatch")
+        sbatch_path = config_file.with_suffix(".sl")
         sbatch_path.write_text(rendered_script)
         logger.success(f"Generated SBATCH script: {sbatch_path}")
 
@@ -203,6 +203,7 @@ def generate(
 if __name__ == "__main__":
     app()
   
+
 
 
 
